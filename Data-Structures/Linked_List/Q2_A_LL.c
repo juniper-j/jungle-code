@@ -7,7 +7,7 @@ Purpose: Implementing the required functions for Question 2 */
 //////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h>	// 진영!!! malloc(), free(), exit(), atoi()
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -125,20 +125,23 @@ void printList(LinkedList *ll){
 	printf("\n");
 }
 
-
-void removeAllItems(LinkedList *ll)
-{
-	ListNode *cur = ll->head;
+// 진영!!! 연결 리스트를 순회하며 모든 노드를 제거(+메모리 해제, 리스트 초기화)하는 함수 removeAllItems
+void removeAllItems(LinkedList *ll)		// LinkedList 구조체의 포인터 = 매개변수 ll
+{	
+	// ListNode의 포인터 cur의 역할: 현재 순회 중인 노드를 가리킴
+	ListNode *cur = ll->head;	// cur를 head로 초기화: ll은 연결리스트를 가리키는 포인터. 즉, 연결 리스트의 첫번째 노드(= head 노드)의 주소를 가리킴
+	// ListNode의 포인터 tmp의 역할: 삭제 전에 다음 노드를 기억하기 위함
 	ListNode *tmp;
 
-	while (cur != NULL){
-		tmp = cur->next;
-		free(cur);
-		cur = tmp;
+	while (cur != NULL){	// 리스트 끝까지 순회
+		tmp = cur->next;	// tmp에 cur->next(주소) 저장
+		free(cur);			// 펑! free(포인터)는 포인터를 해제하는게 아님. 포인터가 가리키고 있는 메모리 공간(노드)을 해제하는 것 = Heap 메모리에서 할당된 공간을 반환
+		cur = tmp;			// tmp가 가리키고 있는 메모리 주소를 cur 포인터에 복사
 	}
-	ll->head = NULL;
-	ll->size = 0;
-}
+	// 연결 리스트가 비어 있다면, 
+	ll->head = NULL;		// head 포인터를 Null로 초기화
+	ll->size = 0;			// 리스트 크기 정보도 0으로 초기화
+}	// ll은 Null일까? NO!
 
 
 ListNode *findNode(LinkedList *ll, int index){
@@ -171,6 +174,7 @@ int insertNode(LinkedList *ll, int index, int value){
 		return -1;
 
 	// If empty list or inserting first node, need to update head pointer
+	// 진영!!! 
 	if (ll->head == NULL || index == 0){
 		cur = ll->head;
 		ll->head = malloc(sizeof(ListNode));
