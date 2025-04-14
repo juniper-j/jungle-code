@@ -127,24 +127,31 @@ int main()
 //////////////////////////////////////////////////////////////////////////////////
 void alternateMergeLinkedList(LinkedList *ll1, LinkedList *ll2)
 {
+	// 두 리스트 중 하나라도 NULL이면 종료
 	if (ll1 == NULL || ll2 == NULL) return;
+
+	// ll1이 비어있으면 삽입할 위치가 없으므로 종료
 	if (ll1->head == NULL) return;
 
+	// 각각 리스트의 현재 노드를 가리키는 포인터 설정
 	ListNode *cur1 = ll1->head;
 	ListNode *cur2 = ll2->head;
 	ListNode *next1;
 	ListNode *next2;
 
+	// 두 리스트 모두 노드가 남아있을 동안 반복
 	while (cur1 != NULL && cur2 != NULL) {
+		// 현재 노드의 다음 노드를 미리 저장해 둠 -> 나중에 끼워넣고 연결하기 위해 필요
 		next1 = cur1->next;
 		next2 = cur2->next;
 
-		cur1->next = cur2;
-		cur2->next = next1;
+		cur1->next = cur2;	// cur2 노드를 cur1 뒤에 삽입
+		cur2->next = next1;	// next1 노드를 cur2 뒤에 삽입
 
-		cur1 = next1;
-		cur2 = next2;
+		cur1 = next1;		// ll1의 다음 위치로 포인터 이동
+		cur2 = next2;		// ll2의 다음 위치로 포인터 이동
 	}
+	// ll2의 head를 남은 노드로 갱신 (남은 노드가 없다면 NULL이 됨)
 	ll2->head = cur2;
 }
 

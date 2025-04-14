@@ -38,7 +38,7 @@ int removeNode(LinkedList *ll, int index);
 //////////////////////////// main() //////////////////////////////////////////////
 
 int main()
-{
+{	
 	LinkedList ll;
 	int c, i, j;
 	c = 1;
@@ -65,11 +65,11 @@ int main()
 			printf("The resulting linked list is: ");
 			printList(&ll);
 			break;
-		case 2:
-			moveEvenItemsToBack(&ll); // You need to code this function
+		case 2:		// 리스트에서 짝수 항목들을 뒤쪽으로 이동
+			moveEvenItemsToBack(&ll);
 			printf("The resulting linked list after moving even integers to the back of the linked list is: ");
 			printList(&ll);
-			removeAllItems(&ll);
+			removeAllItems(&ll);	// 리스트의 모든 노드를 해제하며 메모리 정리
 			break;
 		case 0:
 			removeAllItems(&ll);
@@ -82,13 +82,65 @@ int main()
 	return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////////////
+//
+// *** moveEvenItemsToBack(LinkedList *ll) ***
+//
+// - 본 함수는 입력된 연결 리스트에서 홀수 정수 노드들을 모두 리스트의 뒤쪽으로 이동시키는 기능을 수행함
+// - 리스트를 한 번 순회하면서 각 노드를 홀수 리스트(odd list)와 짝수 리스트(even list)로 분리함
+// - 분리 시 원래의 순서를 유지하기 위해, 각 리스트에 노드를 추가할 때 head와 tail 포인터를 사용함
+// - 순회가 완료된 후, 홀수 리스트의 마지막 노드(oddTail)와 짝수 리스트의 시작 노드(evenHead)를 연결하여 최종 리스트를 구성함
+//
+//////////////////////////////////////////////////////////////////////////////////
 void moveEvenItemsToBack(LinkedList *ll)
 {
-	/* add your code here */
-}
+	// 1. 연결리스트가 NULL이거나, 연결리스트가 비어있으면 종료
+	if (ll == NULL || ll->head == NULL) return;
 
+	// 2. cur 포인터(전체 노드 순회용)를 연결리스트의 head로 설정
+	// 짝수, 홀수의 Head, Tail 포인터를 각각 NULL로 초기화
+	ListNode *cur = ll->head;
+	ListNode *evenHead = NULL, *evenTail = NULL;
+	ListNode *oddHead = NULL, *oddTail = NULL;
+
+	// 3. 연결리스트의 노드가 남아있을 때까지 순회하며 다음을 반복
+	// - cur의 다음 노드를 nextNode에 저장
+	// - cur를 리스트에서 분리하기 위해 NULL로 설정
+	// - cur->item(데이터)가 짝수인지 아닌지, Head가 NULL인지 아닌지에 따라 
+	//		Head, Tail 업데이트하며 even, odd 리스트 연결
+	// - cur에 nextNode를 대입하여 다음 노드로 이동
+	while (cur != NULL) {
+		ListNode *nextNode = cur -> next;
+		cur->next = NULL;
+
+		if (cur->item % 2 == 0) {
+			if (evenHead == NULL) {
+				evenHead = evenTail = cur;
+			} else {
+				evenTail->next = cur;
+				evenTail = cur;
+			}
+		} else {
+			if (oddHead == NULL) {
+				oddHead = oddTail = cur;
+			} else {
+				oddTail->next = cur;
+				oddTail = cur;
+			}
+		}
+		cur = nextNode;
+	}
+
+	// 4. 반복문 종료 후, odd 리스트가 비어있다면 연결리스트의 head를 evenHead로 설정
+	//	아니라면, oddTail의 next 포인터를 evenHead에 연결 및 연결리스트 head를 oddHead로 설정
+	if (oddHead == NULL) {
+		ll->head = evenHead;
+	} else {
+		ll->head = oddHead;
+		oddTail->next = evenHead;
+	}
+}
 ///////////////////////////////////////////////////////////////////////////////////
 
 void printList(LinkedList *ll){
