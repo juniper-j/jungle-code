@@ -17,22 +17,20 @@ Purpose: Implementing the required functions for Question 1
 // 노드(ListNode) 및 연결리스트(LinkedList) 구조체 정의
 
 /* 각 노드는 item(정수)과 다음 노드를 가리키는 포인터(next)를 가짐 */
-typedef struct _listnode{
+typedef struct _listnode {
 	int item;
 	struct _listnode *next;
-} ListNode;			// You should not change the definition of ListNode
+} ListNode;			
 
 /* 연결 리스트는 head(첫 노드 포인터)와 size(노드 개수)를 가짐 */
-typedef struct _linkedlist{
+typedef struct _linkedlist {
 	int size;
 	ListNode *head;
-} LinkedList;			// You should not change the definition of LinkedList
-
+} LinkedList;			
 
 ///////////////////////// function prototypes ////////////////////////////////////
 
-//You should not change the prototype of this function
-// 문제에서 구현을 요구하는 함수
+// 문제에서 구현을 요구하는 함수 (Q1: 순서에 맞춰 노드 삽입)
 int insertSortedLL(LinkedList *ll, int item);
 
 // 출력, 삽입, 삭제 등에 사용될 함수들 (이미 제공된 코드)
@@ -52,7 +50,6 @@ int main()
 	int c, i, j;
 	c = 1;
 
-	//Initialize the linked list 1 as an empty linked list
 	// ll 구조체 내부 필드 초기화 (빈 리스트)
 	ll.head = NULL;	// 아직 노드가 하나도 없으므로 head는 NULL
 	ll.size = 0;	// 노드 개수도 0
@@ -117,20 +114,27 @@ int main()
 //////////////////////////////////////////////////////////////////////////////////
 int insertSortedLL(LinkedList *ll, int item)
 {
+    ListNode *pre, *cur;
+    int index = 0;				// 몇 번째 위치에 삽입할지를 추적 (0부터 시작)
+
 	if (ll == NULL) return -1;	// 연결리스트 자체가 할당되지 않았거나, 초기화되지 않은 상태면 '-1' 반환
 
-	if (ll->head == NULL) {		// 리스트는 존재하지만, 노드가 없으면 
-		if (insertNode(ll, 0, item) == 0) return 0;	// insertNode로 삽입 후 index '0' 반환
-		else return -1;			// 이외 실패 시 '-1' 반환
-	}
+    if (ll->head == NULL || index == 0) {		// 리스트는 존재하지만, 노드가 없으면 
+        cur = ll->head;	                        // cur 포인터를 연결 리스트의 첫 노드(head)로 초기화
+        ll->head = malloc(sizeof(ListNode));	// 새 노드를 힙 메모리에 동적 할당 후, 그 주소를 반환해 ll->head에 다시 저장
+		ll->head->item = item;		// 새 노드에 데이터(value) 저장
+		ll->head->next = cur;		// 새 노드의 next를 기존 head(cur)로 연결
+		ll->size++;					// 리스트 크기 증가
+		return 0;					// 삽입 성공이므로 0 반환
+	} else {
+        
+    }
 
-	ListNode *cur = ll->head;	// cur 포인터를 연결 리스트의 첫 노드(head)로 초기화
-	int index = 0;				// 몇 번째 위치에 삽입할지를 추적 (0부터 시작)
 
 	while (cur != NULL) {
 		if (cur->item == item) return -1;	// 중복값 존재하면 '-1' 반환
-		if (cur->item > item) break;		// 현재 노드값이 item보다 크면, 해당 index가 item을 삽입할 위치
-		cur = cur->next;	// 위 케이스 이외 상황에는 다음 노드로 이동하며,
+		if (cur->item > item) break;		// 현재 노드값이 item보다 크면, 해당 index가 item을 삽입할 위치 -> 개선의 여지가 있음
+		cur = cur->next;	// 위 케이스 이외 상황에는 다음 노드로 이동하며, 
 		index++;			// index 1 증가
 	}
 
