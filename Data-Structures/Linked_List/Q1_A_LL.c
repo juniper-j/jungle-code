@@ -110,36 +110,50 @@ int main()
 // - 이미 오름차순 정렬된 연결 리스트에 새로운 정수 item을 삽입
 // - 중복 값이 있으면 삽입 실패(-1 반환)
 // - 삽입 성공 시 삽입 위치(index)를 반환
+// - insertNode(), insertNodeWithPre() 없이 직접 삽입 처리
 //
 //////////////////////////////////////////////////////////////////////////////////
 int insertSortedLL(LinkedList *ll, int item)
 {
-    ListNode *pre, *cur;
-    int index = 0;				// 몇 번째 위치에 삽입할지를 추적 (0부터 시작)
+    // 1. 연결리스트가 NULL이면 -1 반환
+	if (ll == NULL) return -1;	
 
-	if (ll == NULL) return -1;	// 연결리스트 자체가 할당되지 않았거나, 초기화되지 않은 상태면 '-1' 반환
+    // 2. 이전 노드를 NULL, 현재 노드를 head, index = 0 으로 설정
+    ListNode *pre = NULL; 
+    ListNode *cur = ll->head;
+    int index = 0;
 
-    if (ll->head == NULL || index == 0) {		// 리스트는 존재하지만, 노드가 없으면 
-        cur = ll->head;	                        // cur 포인터를 연결 리스트의 첫 노드(head)로 초기화
-        ll->head = malloc(sizeof(ListNode));	// 새 노드를 힙 메모리에 동적 할당 후, 그 주소를 반환해 ll->head에 다시 저장
-		ll->head->item = item;		// 새 노드에 데이터(value) 저장
-		ll->head->next = cur;		// 새 노드의 next를 기존 head(cur)로 연결
-		ll->size++;					// 리스트 크기 증가
-		return 0;					// 삽입 성공이므로 0 반환
-	} else {
-        
-    }
-
-
+    // 3. 현재 노드를 따라가며 아래를 반복:
+    // - 현재 노드의 값이 item과 같으면 중복이므로 -1을 반환
+    // - 현재 노드의 값이 item보다 크면 삽입 위치를 찾은 것이므로 반복 종료
+    // - 그렇지 않으면 pre를 현재 노드로 갱신하고, cur를 다음 노드로 이동하고, index를 1 증가
 	while (cur != NULL) {
-		if (cur->item == item) return -1;	// 중복값 존재하면 '-1' 반환
-		if (cur->item > item) break;		// 현재 노드값이 item보다 크면, 해당 index가 item을 삽입할 위치 -> 개선의 여지가 있음
-		cur = cur->next;	// 위 케이스 이외 상황에는 다음 노드로 이동하며, 
+		if (cur->item == item) return -1;	// 중복값 발견
+		if (cur->item > item) break;		// 삽입 위치 도달
+		pre = cur;
+        cur = cur->next;	// 위 케이스 이외 상황에는 다음 노드로 이동하며, 
 		index++;			// index 1 증가
 	}
 
-	if (insertNode(ll, index, item) == 0) return index;	// 정상 삽입 시 삽입된 index 반환
- 	else return -1;	// insertNode 실패 시 '-1' 반환
+    // 4. 새 노드를 동적 할당하고 item 값을 저장
+    // 5. 새 노드의 next를 현재 노드(cur)로 설정
+    ListNode *newNode = malloc(sizeof(ListNode));
+    if (newNode == NULL) return -1; // 메모리 할당 실패
+    newNode->item = item;
+    newNode->next = cur;
+
+    // 6. pre가 NULL이면 (즉 맨 앞에 삽입하는 경우): 새 노드를 head로 설정
+    // NULL이 아니면, pre의 next를 새 노드로 설정
+    if (pre == NULL) {
+        // 맨 앞 삽입 (head 갱신)
+        ll->head = newNode;
+    } else {
+        pre->next = newNode;
+    }
+    
+    // 7. 리스트의 크기를 1 증가시키고, 삽입 위치 index를 반환
+    ll->size++;
+    return index;
 }
 
 
