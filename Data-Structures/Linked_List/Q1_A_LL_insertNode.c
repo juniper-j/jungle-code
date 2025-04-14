@@ -103,31 +103,68 @@ int main()
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 //
-// *** insertSortedLL(LinkedList *ll, int item) ***
+// insertSortedLL(LinkedList *ll, int item)
 //
-// - 이미 오름차순 정렬된 연결 리스트에 새로운 정수 item을 삽입
-// - 중복 값이 있으면 삽입 실패(-1 반환)
-// - 삽입 성공 시 삽입 위치(index)를 반환
+// - 이미 오름차순으로 정렬된 연결 리스트에 새로운 정수 item을 삽입
+// - 중복 값이 있으면 삽입하지 않고 -1 반환
+// - 삽입 성공 시 해당 위치(index)를 반환
+// - insertNodeWithPre()을 사용해 중복 순회 없이 삽입 처리
 //
-//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 int insertSortedLL(LinkedList *ll, int item)
 {
-	if (ll == NULL) return -1;	// 연결리스트 자체가 할당되지 않았거나, 초기화되지 않은 상태면 '-1' 반환
+    if (ll == NULL) return -1; // 연결 리스트 자체가 NULL이면 실패
 
-	ListNode *cur = ll->head;	// cur 포인터를 연결 리스트의 첫 노드(head)로 초기화
-	int index = 0;				// 몇 번째 위치에 삽입할지를 추적 (0부터 시작)
+    ListNode *cur = ll->head;  // 현재 노드를 가리키는 포인터
+    ListNode *pre = NULL;      // 현재 노드의 이전 노드를 추적
+    int index = 0;             // 삽입할 위치 (리턴용)
 
-	while (cur != NULL) {
-		if (cur->item == item) return -1;	// 중복값 존재하면 '-1' 반환
-		if (cur->item > item) break;		// 현재 노드값이 item보다 크면, 해당 index가 item을 삽입할 위치 -> 개선의 여지가 있음
-		cur = cur->next;	// 위 케이스 이외 상황에는 다음 노드로 이동하며, 
-		index++;			// index 1 증가
-	}
+    // 삽입 위치 탐색 및 중복 체크
+    while (cur != NULL) {
+        if (cur->item == item) return -1; // 중복 값 존재 시 실패
+        if (cur->item > item) break;      // 삽입 위치 도달
+        pre = cur;
+        cur = cur->next;
+        index++;
+    }
 
-	// 정상 삽입 시 삽입된 index 반환, 실패 시 '-1' 반환
-	return insertNode(ll, index, item) == 0 ? index : -1;
+		// 정상 삽입 시 삽입된 index 반환, 실패 시 -1 반환
+		return insertNodeWithPre(ll, pre, item) == 0 ? index : -1;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////
+// 
+// *** 새로 정의한 함수 ***
+// *** insertNodeWithPre(LinkedList *ll, ListNode *pre, int item) ***
+//
+// - pre 노드 뒤에 item 값을 가지는 새 노드를 삽입
+// - pre가 NULL이면 head 앞에 삽입 (리스트의 맨 앞)
+// - 메모리 할당 실패 시 -1 반환, 성공 시 0 반환
+//
+///////////////////////////////////////////////////////////////////////////////////
+int insertNodeWithPre(LinkedList *ll, ListNode *pre, int item)
+{
+    // 새 노드 동적 할당
+    ListNode *newNode = malloc(sizeof(ListNode));
+    if (newNode == NULL) return -1; // 메모리 할당 실패 시
+
+    newNode->item = item; // 새 노드에 데이터 설정
+
+    if (pre == NULL) {
+        // 리스트 맨 앞에 삽입
+        newNode->next = ll->head;
+        ll->head = newNode;
+    } else {
+        // pre 뒤에 삽입
+        newNode->next = pre->next;
+        pre->next = newNode;
+    }
+
+    ll->size++; // 리스트 크기 증가
+    return 0;   // 삽입 성공
 }
 
 
