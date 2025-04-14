@@ -48,7 +48,6 @@ int main()
 	ll.head = NULL;
 	ll.size = 0;
 
-
 	printf("1: Insert an integer to the linked list:\n");
 	printf("2: Move the largest stored value to the front of the list:\n");
 	printf("0: Quit:\n");
@@ -89,16 +88,40 @@ int main()
 //
 // *** moveMaxToFront(ListNode **ptrHead) ***
 //
-// - 
-// - 
-// - 
+// - 연결 리스트를 '한 번'만 순회하면서 가장 큰 값을 가진 노드를 찾음
+// - 해당 노드를 현재 위치에서 제거한 뒤, 리스트의 맨 앞으로 이동시킴
+// - 최대값이 이미 맨 앞에 있다면 아무 작업도 하지 않음
 //
 //////////////////////////////////////////////////////////////////////////////////
 int moveMaxToFront(ListNode **ptrHead)
 {
-    
-}
+	// 1. 예외 처리
+    if (ptrHead == NULL || *ptrHead == NULL || (*ptrHead)->next == NULL) return;
 
+	// 2. 포인터 초기화
+	ListNode *max = *ptrHead;
+	ListNode *prev_max = NULL;
+	ListNode *prev = *ptrHead;
+	ListNode *cur = (*ptrHead)->next;
+
+	// 3. 리스트를 '한 번' 순회하며 최댓값 노드와 그 이전 노드 탐색
+	while (cur != NULL) {
+		if (cur->item > max->item) {
+			max = cur;
+			prev_max = prev;
+		}
+		prev = cur;
+		cur = cur->next;
+	}
+
+	// 4. max가 중간에 있는 경우만, 1) max 전후 이어주고  2) max를 맨 앞으로 이동
+	if (max != *ptrHead) {
+		prev_max->next = max->next;	// max 노드를 리스트에서 제거
+		max->next = *ptrHead;		// max를 맨 앞으로 이동
+		*ptrHead = max;
+	}
+	return 0;
+}
 //////////////////////////////////////////////////////////////////////////////////
 
 void printList(LinkedList *ll){
