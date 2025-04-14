@@ -96,7 +96,7 @@ int main()
 int moveMaxToFront(ListNode **ptrHead)
 {
 	// 1. 예외 처리
-    if (ptrHead == NULL || *ptrHead == NULL || (*ptrHead)->next == NULL) return;
+    if (ptrHead == NULL || *ptrHead == NULL || (*ptrHead)->next == NULL) return 0;
 
 	// 2. 포인터 초기화
 	ListNode *max = *ptrHead;
