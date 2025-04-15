@@ -27,7 +27,7 @@ typedef struct _linkedlist
 //////////////////////// function prototypes /////////////////////////////////////
 
 // You should not change the prototype of this function
-void RecursiveReverse(ListNode **ptrHead);
+void recursiveReverse(ListNode **ptrHead);
 
 void printList(LinkedList *ll);
 void removeAllItems(LinkedList *ll);
@@ -67,7 +67,7 @@ int main()
 			printList(&ll);
 			break;
 		case 2:
-			RecursiveReverse(&(ll.head)); // You need to code this function
+			recursiveReverse(&(ll.head)); // You need to code this function
 			printf("The resulting linked list after reversed the given linked list is: ");
 			printList(&ll);
 			removeAllItems(&ll);
@@ -83,14 +83,46 @@ int main()
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////
-
-void RecursiveReverse(ListNode **ptrHead)
-{
-	/* add your code here */
-}
 
 //////////////////////////////////////////////////////////////////////////////////
+// 
+// *** recReverse(ListNode *head) ***
+//
+// - Helper 함수: 새 head를 리턴하면서 리스트를 뒤집음
+// - 입력받은 연결 리스트(head)를 재귀적으로 뒤집는다.
+// - 기저 조건: head가 NULL이거나 head->next가 NULL이면, 그대로 현재 head를 반환
+// - 재귀 호출로 리스트의 나머지 부분를 뒤집은 후, 현재 노드(head)를 맨 뒤에 연결하여 역전 수행
+// - 최종적으로 뒤집힌 리스트의 새 head(newHead)를 반환
+//
+// 개념:
+// - head: 현재 노드를 의미하며, 재귀 호출 시 위치가 이동한다.
+// - head->next: 리스트의 다음 노드를 나타내며, 재귀 호출을 통해 역순으로 연결된다.
+//
+//////////////////////////////////////////////////////////////////////////////////
+ListNode* recReverse(ListNode *head) {
+    if (head == NULL || head->next == NULL) return head;
+    
+    // 재귀 호출로 나머지 리스트 뒤집기
+    ListNode *newHead = recReverse(head->next);
+    
+    head->next->next = head;
+    head->next = NULL;
+    
+    // 새로 뒤집힌 리스트의 head 반환
+    return newHead;
+}
+//////////////////////////////////////////////////////////////////////////////////
+// 
+// *** recursiveReverse(ListNode **ptrHead) ***
+// 
+// - Wrapper 함수: 재귀적 뒤집기를 호출한 뒤, ptrHead를 새 head로 갱신
+//
+//////////////////////////////////////////////////////////////////////////////////
+void recursiveReverse(ListNode **ptrHead) {
+    *ptrHead = recReverse(*ptrHead);
+}
+//////////////////////////////////////////////////////////////////////////////////
+
 
 void printList(LinkedList *ll){
 
