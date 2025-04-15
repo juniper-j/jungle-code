@@ -85,41 +85,31 @@ int main()
 
 
 //////////////////////////////////////////////////////////////////////////////////
-// 
-// *** recReverse(ListNode *head) ***
 //
-// - Helper 함수: 새 head를 리턴하면서 리스트를 뒤집음
-// - 입력받은 연결 리스트(head)를 재귀적으로 뒤집는다.
-// - 기저 조건: head가 NULL이거나 head->next가 NULL이면, 그대로 현재 head를 반환
-// - 재귀 호출로 리스트의 나머지 부분를 뒤집은 후, 현재 노드(head)를 맨 뒤에 연결하여 역전 수행
-// - 최종적으로 뒤집힌 리스트의 새 head(newHead)를 반환
-//
-// 개념:
-// - head: 현재 노드를 의미하며, 재귀 호출 시 위치가 이동한다.
-// - head->next: 리스트의 다음 노드를 나타내며, 재귀 호출을 통해 역순으로 연결된다.
-//
-//////////////////////////////////////////////////////////////////////////////////
-ListNode* recReverse(ListNode *head) {
-    if (head == NULL || head->next == NULL) return head;
-    
-    // 재귀 호출로 나머지 리스트 뒤집기
-    ListNode *newHead = recReverse(head->next);
-    
-    head->next->next = head;
-    head->next = NULL;
-    
-    // 새로 뒤집힌 리스트의 head 반환
-    return newHead;
-}
-//////////////////////////////////////////////////////////////////////////////////
-// 
 // *** recursiveReverse(ListNode **ptrHead) ***
-// 
-// - Wrapper 함수: 재귀적 뒤집기를 호출한 뒤, ptrHead를 새 head로 갱신
+//
+// - 연결 리스트를 재귀적으로 뒤집는다
+// - 각 노드의 next 포인터 방향을 바꾼다
+// - 재귀 호출을 이용하여 맨 끝 노드부터 거꾸로 연결
+// - 최종적으로 *ptrHead를 새로운 head로 갱신
+// - 개념: ptrHead (타입: ListNode **) → “ListNode *를 가리키는 포인터”
+//		  *ptrHead (타입: ListNode *) → “연결 리스트의 실제 head”
+// 		  **ptrHead (타입: ListNode) → “head가 가리키는 노드(struct) 그 자체”
+// !! 재귀적으로 &rest를 넘긴단 건, 그 노드 포인터 주소를 넘겨서 바깥에서 연결을 반전시키겠다는 뜻 !! 
 //
 //////////////////////////////////////////////////////////////////////////////////
-void recursiveReverse(ListNode **ptrHead) {
-    *ptrHead = recReverse(*ptrHead);
+void recursiveReverse(ListNode **ptrHead)
+{
+	if (*ptrHead == NULL || (*ptrHead)->next == NULL) return;
+
+	ListNode *first = *ptrHead;
+	ListNode *rest = first->next;
+
+	recursiveReverse(&rest); 
+
+	first->next->next = first;
+	first->next = NULL;
+	*ptrHead = rest;
 }
 //////////////////////////////////////////////////////////////////////////////////
 
