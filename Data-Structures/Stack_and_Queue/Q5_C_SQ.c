@@ -105,14 +105,16 @@ int main()
 	return 0;
 }
 
-////////////////////////////////////////////////////////////
+
 
 void recursiveReverse(Queue *q)
 {
-/* add your code here */
+	// 1. 
+	if (q == NULL || q->ll.head == NULL || isEmptyQueue(q)) return;
+
+
 }
 
-//////////////////////////////////////////////////////////////////
 
 void removeAllItemsFromQueue(Queue *q)
 {

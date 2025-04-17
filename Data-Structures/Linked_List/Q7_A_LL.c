@@ -88,28 +88,48 @@ int main()
 //
 // *** recursiveReverse(ListNode **ptrHead) ***
 //
-// - 연결 리스트를 재귀적으로 뒤집는다
-// - 각 노드의 next 포인터 방향을 바꾼다
-// - 재귀 호출을 이용하여 맨 끝 노드부터 거꾸로 연결
-// - 최종적으로 *ptrHead를 새로운 head로 갱신
-// - 개념: ptrHead (타입: ListNode **) → “ListNode *를 가리키는 포인터”
-//		  *ptrHead (타입: ListNode *) → “연결 리스트의 실제 head”
-// 		  **ptrHead (타입: ListNode) → “head가 가리키는 노드(struct) 그 자체”
-// !! 재귀적으로 &rest를 넘긴단 건, 그 노드 포인터 주소를 넘겨서 바깥에서 연결을 반전시키겠다는 뜻 !! 
+// - 연결 리스트를 반복문으로 뒤집는다 (실제로는 재귀가 아닌 반복이지만, 함수명 유지)
+// - 각 노드의 next 포인터 방향을 역방향으로 설정하여 리스트를 뒤집음
+// - 최종적으로 *ptrHead를 새로운 head (가장 마지막 노드)로 갱신
+//
+// [개념 정리]
+// - ptrHead (ListNode **)       : head 포인터의 주소
+// - *ptrHead (ListNode *)       : 연결 리스트의 시작점 (head 노드 자체)
+// - **ptrHead (ListNode 구조체) : 실제 노드의 내용물
+//
+// [로직 개요]
+// 1. pre는 이미 뒤집힌 노드를 가리킴 (초기엔 NULL)
+// 2. cur는 아직 뒤집히지 않은 노드를 따라가며 하나씩 연결 방향을 바꿈
+// 3. 반복이 끝나면 pre가 새로운 head가 되며 *ptrHead를 갱신함
 //
 //////////////////////////////////////////////////////////////////////////////////
 void recursiveReverse(ListNode **ptrHead)
 {
-	if (*ptrHead == NULL || (*ptrHead)->next == NULL) return;
+    // 예외 처리: NULL 포인터 또는 빈 리스트일 경우 아무 작업도 하지 않음
+    if (ptrHead == NULL || *ptrHead == NULL) return;
 
-	ListNode *first = *ptrHead;
-	ListNode *rest = first->next;
+    // pre: 현재까지 뒤집은 리스트의 head (초기에는 NULL)
+    ListNode *pre = NULL;
 
-	recursiveReverse(&rest); 
+    // cur: 아직 뒤집지 않은 나머지 리스트의 현재 노드
+    ListNode *cur = *ptrHead;
 
-	first->next->next = first;
-	first->next = NULL;
-	*ptrHead = rest;
+    // 리스트 전체를 순회하며 방향을 반전시킴
+    while (cur != NULL)
+    {
+        // temp: 다음 노드를 백업해둠 (next 포인터를 바꾸기 전에 저장해둬야 함)
+        ListNode *temp = cur->next;
+
+        // 현재 노드의 next를 이전 노드를 가리키게 설정 (방향 반전)
+        cur->next = pre;
+        // pre를 한 칸 앞으로 이동 (현재 노드가 이제 뒤집힌 리스트의 head가 됨)
+        pre = cur;
+        // cur도 한 칸 앞으로 이동 (다음 노드를 처리하기 위해)
+        cur = temp;
+    }
+
+    // 리스트의 head를 마지막 노드(pre)로 갱신
+    *ptrHead = pre;
 }
 //////////////////////////////////////////////////////////////////////////////////
 
