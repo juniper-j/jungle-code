@@ -88,48 +88,44 @@ int main()
 //
 // *** recursiveReverse(ListNode **ptrHead) ***
 //
-// - 연결 리스트를 반복문으로 뒤집는다 (실제로는 재귀가 아닌 반복이지만, 함수명 유지)
-// - 각 노드의 next 포인터 방향을 역방향으로 설정하여 리스트를 뒤집음
-// - 최종적으로 *ptrHead를 새로운 head (가장 마지막 노드)로 갱신
+// - 연결 리스트를 재귀적으로 뒤집는다
+// - 리스트를 재귀적으로 끝까지 들어간 뒤, 되돌아오면서 각 노드의 방향을 바꾼다
+// - 단, 되돌아올 때 while 문을 이용해 마지막 노드를 찾아 현재 노드를 붙인다
 //
-// [개념 정리]
-// - ptrHead (ListNode **)       : head 포인터의 주소
-// - *ptrHead (ListNode *)       : 연결 리스트의 시작점 (head 노드 자체)
-// - **ptrHead (ListNode 구조체) : 실제 노드의 내용물
+// ⚠️ 이 구현은 매 단계마다 리스트의 끝까지 순회하므로 시간복잡도는 O(n^2)
 //
-// [로직 개요]
-// 1. pre는 이미 뒤집힌 노드를 가리킴 (초기엔 NULL)
-// 2. cur는 아직 뒤집히지 않은 노드를 따라가며 하나씩 연결 방향을 바꿈
-// 3. 반복이 끝나면 pre가 새로운 head가 되며 *ptrHead를 갱신함
+// [포인터 설명]
+// - ptrHead: ListNode* 를 가리키는 포인터 (즉, head 의 주소)
+// - *ptrHead: 현재 연결 리스트의 head 노드
+// - first: 현재 함수 호출에서의 첫 번째 노드
+// - others: first 이후 나머지 리스트의 시작점
+// - cur: 재귀 호출 이후, others 리스트의 끝을 찾아 first를 연결하기 위한 순회 포인터
 //
 //////////////////////////////////////////////////////////////////////////////////
 void recursiveReverse(ListNode **ptrHead)
 {
-    // 예외 처리: NULL 포인터 또는 빈 리스트일 경우 아무 작업도 하지 않음
-    if (ptrHead == NULL || *ptrHead == NULL) return;
+    // base case: 빈 리스트이거나, 노드가 하나뿐이면 그대로 종료
+	if (*ptrHead == NULL || (*ptrHead)->next == NULL) return;
 
-    // pre: 현재까지 뒤집은 리스트의 head (초기에는 NULL)
-    ListNode *pre = NULL;
+	ListNode *first = *ptrHead;
+	ListNode *others = first->next;
 
-    // cur: 아직 뒤집지 않은 나머지 리스트의 현재 노드
-    ListNode *cur = *ptrHead;
+    // 나머지 리스트를 재귀적으로 뒤집음
+	recursiveReverse(&others);
 
-    // 리스트 전체를 순회하며 방향을 반전시킴
-    while (cur != NULL)
-    {
-        // temp: 다음 노드를 백업해둠 (next 포인터를 바꾸기 전에 저장해둬야 함)
-        ListNode *temp = cur->next;
+    // others는 이미 뒤집힌 리스트의 head
+    // 그 끝까지 이동하여 cur를 마지막 노드로 만든다
+	ListNode *cur = others;
+	while (cur->next != NULL)
+		cur = cur->next;
 
-        // 현재 노드의 next를 이전 노드를 가리키게 설정 (방향 반전)
-        cur->next = pre;
-        // pre를 한 칸 앞으로 이동 (현재 노드가 이제 뒤집힌 리스트의 head가 됨)
-        pre = cur;
-        // cur도 한 칸 앞으로 이동 (다음 노드를 처리하기 위해)
-        cur = temp;
-    }
+    // 뒤집힌 리스트의 끝(cur)에 현재 노드(first)를 연결
+	cur->next = first;
+    // first는 리스트의 꼬리가 되므로 next를 NULL로 설정
+	first->next = NULL;
 
-    // 리스트의 head를 마지막 노드(pre)로 갱신
-    *ptrHead = pre;
+    // head 포인터를 others(뒤집힌 리스트의 head)로 갱신
+	*ptrHead = others;
 }
 //////////////////////////////////////////////////////////////////////////////////
 
