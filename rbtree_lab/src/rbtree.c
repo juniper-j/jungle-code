@@ -5,6 +5,7 @@
 rbtree *new_rbtree(void) {
   rbtree *p = (rbtree *)calloc(1, sizeof(rbtree));
   // TODO: initialize struct if needed
+  // 여기에 코드를 짜야 합니다. 깃헙 올리기 테스트
   return p;
 }
 
