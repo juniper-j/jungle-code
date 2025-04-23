@@ -351,14 +351,17 @@ void test_find_erase(rbtree *t, const key_t *arr, const size_t n)
 {
   for (int i = 0; i < n; i++)
   {
+    printf(">> insert arr[%d] = %d\n", i, arr[i]);
     node_t *p = rbtree_insert(t, arr[i]);
     assert(p != NULL);
   }
 
   for (int i = 0; i < n; i++)
   {
+    printf(">> find/erase arr[%d] = %d\n", i, arr[i]);
     node_t *p = rbtree_find(t, arr[i]);
-    // printf("arr[%d] = %d\n", i, arr[i]);
+    // printf("arr[%d] = %d, found? %s\n", i, arr[i], p ? "yes" : "no"); // p가 null이 아니면 find로 찾음, null이면 못찾음
+    // printf("arr[%d] = %d\n", i, arr[i]);  // int rbtree_erase() debugging #2
     assert(p != NULL);
     assert(p->key == arr[i]);
     rbtree_erase(t, p);
@@ -390,6 +393,12 @@ void test_find_erase_fixed()
   const size_t n = sizeof(arr) / sizeof(arr[0]);
   rbtree *t = new_rbtree();
   assert(t != NULL);
+    printf("arr[] = { ");
+    for (size_t i = 0; i < n; i++) {
+      printf("%d", arr[i]);
+      if (i < n - 1) printf(", ");
+    }
+    printf(" }\n");
 
   test_find_erase(t, arr, n);
 
@@ -418,7 +427,7 @@ int main(void)
   test_insert_single(1024);
   test_find_single(512, 1024);
   test_erase_root(128);
-  test_find_erase_fixed();
+  test_find_erase_fixed();  //-> Assertion `p != NULL' failed.
   test_minmax_suite();
   test_to_array_suite();
   test_distinct_values();
